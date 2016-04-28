@@ -37,3 +37,7 @@ body {
     margin: 0px auto;
     background-color:#222;
 }
+
+#main {
+	padding-top: 10px;
+}

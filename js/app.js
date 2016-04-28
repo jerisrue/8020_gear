@@ -33,6 +33,7 @@
 var SAAgent,
     SASocket,
     connectionListener,
+    chart,
     responseTxt = document.getElementById("responseTxt");
 
 /* Make Provider application running in background */
@@ -41,7 +42,7 @@ var SAAgent,
 function loadChart() {
 	//alert("ffstgag");
 	
-	var chart = c3.generate({
+	chart = c3.generate({
         bindto: '#main_inner',
         data: {
             columns: [
@@ -108,20 +109,29 @@ connectionListener = {
         SASocket.setSocketStatusListener(onConnectionLost);
 
         dataOnReceive =  function dataOnReceive (channelId, data) {
-            var newData;
+            //var newData;
 
             if (!SAAgent.channelIds[0]) {
                 createHTML("Something goes wrong...NO CHANNEL ID!");
                 return;
             }
             
+            //Parse received data
+            createHTML(data);
+            var res = data.split(",");
+            var health = res[0].split("=");
+            var unhealth = res[1].split("=");
+            //Update chart with new data
+            chart.load({unload: ['healthy', 'unhealthy'],columns:[ ['healthy', health[1] ], ['unhealthy', unhealth[1] ]],});
+            createHTML(health[1] + "-" + unhealth[1]);
+            //Healthy=9,Unhealthy=1
+            
             //HERE IS WHERE YOU SET THE DATA TO UPDATE MOBILE APP CHART
-            newData = data; // + " :: " + new Date();
+            //newData = data; // + " :: " + new Date();
 
             /* Send new data to Consumer */
-            SASocket.sendData(SAAgent.channelIds[0], newData);
-            createHTML("Send message:<br />" +
-                        newData);
+            //SASocket.sendData(SAAgent.channelIds[0], newData);
+            //createHTML("Send message:<br />" + newData);
         };
 
         /* Set listener for incoming data from Consumer */
