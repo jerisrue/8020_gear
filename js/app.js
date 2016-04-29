@@ -35,6 +35,8 @@ var SAAgent,
     connectionListener,
     chart,
     responseTxt = document.getElementById("responseTxt");
+var healthy = 5;
+var unhealthy = 5;
 
 /* Make Provider application running in background */
 //tizen.application.getCurrentApplication().hide();
@@ -46,14 +48,44 @@ function loadChart() {
         bindto: '#main_inner',
         data: {
             columns: [
-                ['unhealthy', 40],
-                ['healthy', 60]
+                ['unhealthy', unhealthy],
+                ['healthy', healthy]
             ],
             type: 'pie',
             labels: false,
             colors: {
                 healthy: '#33ff33',
                 unhealthy: '#ff0033'
+            },
+            onclick: function (d, element) {
+            	console.log("onclick", d, element);
+            	
+            	//debugger;
+            	if ( d['id'] === 'healthy' ) {
+            		chart.load( {
+            			unload: ['healthy', 'unhealthy'],
+            			columns:[ 
+        			         ['healthy', chart.data.values('healthy')[0] + 1 ],
+        			         ['unhealthy', chart.data.values('unhealthy')[0] ]
+    			         ],
+			         });
+            		healthy = healthy + 1;
+            	} else { //unhealthy
+            		chart.load( {
+            			unload: ['healthy', 'unhealthy'],
+            			columns:[ 
+        			         ['healthy', chart.data.values('healthy')[0] ],
+        			         ['unhealthy', chart.data.values('unhealthy')[0] + 1 ]
+    			         ],
+			         });
+            		unhealthy = unhealthy + 1;
+            	}
+            	
+            	 
+            	//chart.data.values('healthy')[0].toString()
+            	var toSend = "Healthy=" + healthy + ",Unhealthy=" + unhealthy;
+            	send(toSend);
+            	chart.focus();
             },
         },
         legend: {
@@ -121,8 +153,11 @@ connectionListener = {
             var res = data.split(",");
             var health = res[0].split("=");
             var unhealth = res[1].split("=");
+            healthy = health[1];
+            unhealthy = unhealth[1];
+            
             //Update chart with new data
-            chart.load({unload: ['healthy', 'unhealthy'],columns:[ ['healthy', health[1] ], ['unhealthy', unhealth[1] ]],});
+            chart.load({unload: ['healthy', 'unhealthy'],columns:[ ['healthy', healthy ], ['unhealthy', unhealthy ]],});
             createHTML(health[1] + "-" + unhealth[1]);
             //Healthy=9,Unhealthy=1
             
@@ -141,6 +176,17 @@ connectionListener = {
         createHTML("Service connection error<br />errorCode: " + errorCode);
     }
 };
+
+function send(toSend) {
+	try {
+		//debugger;
+		//var toSend = "Healthy=" + chart.data.values('healthy')[0].toString() + ",Unhealthy=" + chart.data.values('unhealthy')[0].toString();
+		SASocket.sendData(SAAgent.channelIds[0], toSend);
+	} catch(err) {
+		console.log("exception [" + err.name + "] msg[" + err.message + "]");
+		createHTML("Unable to send.<br />errorCode: " + err);
+	}
+}
 
 function requestOnSuccess (agents) {
     var i = 0;
@@ -165,28 +211,6 @@ function requestOnError (e) {
 };
 
 
-
-
-/*(function () {
-    /* Basic Gear gesture & buttons handler */
-    /*window.addEventListener('tizenhwkey', function(ev) {
-        var page,
-            pageid;
-
-        if (ev.keyName === "back") {
-            page = document.getElementsByClassName('ui-page-active')[0];
-            pageid = page ? page.id : "";
-            if (pageid === "main") {
-                try {
-                    tizen.application.getCurrentApplication().exit();
-                } catch (ignore) {
-                }
-            } else {
-                window.history.back();
-            }
-        }
-    });
-}());*/
 function setDefaultEvents() {
     //document.addEventListener('tizenhwkey', keyEventCB);
 	window.addEventListener( 'tizenhwkey', function( ev ) {
@@ -205,8 +229,6 @@ function setDefaultEvents() {
 	} );
 }
 
-
-
 function setToastListener () {
 	var toastPopup = document.getElementById('toast');
 
@@ -222,19 +244,7 @@ window.onload = function() {
 	webapis.sa.requestSAAgent(requestOnSuccess, requestOnError);
 
 	setDefaultEvents();
-
 	loadChart();
-	
 	setToastListener();
 };
-
-/*(function(tau) {
-    var toastPopup = document.getElementById('toast');
-
-    toastPopup.addEventListener('popupshow', function(ev){
-        setTimeout(function () {
-            tau.closePopup();
-        }, 3000);
-    }, false);
-})(window.tau);*/
 
