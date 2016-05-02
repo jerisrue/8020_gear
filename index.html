@@ -11,16 +11,54 @@
 	<link href="c3-0.4.10/c3.min.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<div class="ui-page ui-page-active" id="main">
-		<header class="ui-header">
+	<div id="main" class="ui-page ui-page-active" >
+		<header class="ui-header ui-has-more">
 			<h2 class="ui-title">80/20</h2>
+			<button type="button" class="ui-more ui-icon-overflow">More Options</button>
 		</header>
-		<div class="ui-content">
+		<!-- <div class="ui-content">
 			<ul class="ui-listview">
 				<!--<li><a href="#" onclick="connect();">Connect</a></li>
 				<li><a href="#" onclick="disconnect();">Disconnect</a></li>-->
-				<li><a href="#" onclick="send();">Send</a></li>
+				<!-- <li><a href="#" onclick="send();">Send</a></li>
 			</ul>
+		</div>-->
+		<!-- Circle Profile -->
+		<div id="moreoptionsPopupCircle" class="ui-popup">
+			<div id="selector" class="ui-selector">
+				<div class="ui-item show-icon" data-title="Show"></div>
+				<div class="ui-item human-icon" data-title="Human"></div>
+				<div class="ui-item delete-icon" data-title="Delete"></div>
+				<div class="ui-item show-icon" data-title="Show"></div>
+				<div class="ui-item human-icon" data-title="Human"></div>
+				<div class="ui-item delete-icon" data-title="Delete"></div>
+				<div class="ui-item x-icon" data-title="X Icon"></div>
+				<div class="ui-item fail-icon" data-title="Fail"></div>
+				<div class="ui-item show-icon" data-title="Show"></div>
+				<div class="ui-item human-icon" data-title="Human"></div>
+				<div class="ui-item delete-icon" data-title="Delete"></div>
+				<div class="ui-item show-icon" data-title="Show"></div>
+				<div class="ui-item human-icon" data-title="Human"></div>
+				<div class="ui-item delete-icon" data-title="Delete"></div>
+				<div class="ui-item x-icon" data-title="X Icon"></div>
+				<div class="ui-item fail-icon" data-title="Fail"></div>
+				<div class="ui-item show-icon" data-title="Show"></div>
+				<div class="ui-item human-icon" data-title="Human"></div>
+				<div class="ui-item delete-icon" data-title="Delete"></div>
+				<div class="ui-item show-icon" data-title="Show"></div>
+				<div class="ui-item human-icon" data-title="Human"></div>
+				<div class="ui-item delete-icon" data-title="Delete"></div>
+				<div class="ui-item x-icon" data-title="X Icon"></div>
+				<div class="ui-item fail-icon" data-title="Fail"></div>
+				<div class="ui-item show-icon" data-title="Show"></div>
+				<div class="ui-item human-icon" data-title="Human"></div>
+				<div class="ui-item delete-icon" data-title="Delete"></div>
+				<div class="ui-item show-icon" data-title="Show"></div>
+				<div class="ui-item human-icon" data-title="Human"></div>
+				<div class="ui-item delete-icon" data-title="Delete"></div>
+				<div class="ui-item x-icon" data-title="X Icon"></div>
+				<div class="ui-item fail-icon" data-title="Fail"></div>
+			</div>
 		</div>
 		<div id="main_inner"></div>
 		<div id="toast" class="ui-popup ui-popup-toast">

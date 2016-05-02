@@ -1,3 +1,5 @@
+/*global tau */
+
 /*
 * Copyright (c) 2015 Samsung Electronics Co., Ltd.
 * All rights reserved.
@@ -60,7 +62,7 @@ function loadChart() {
             onclick: function (d, element) {
             	console.log("onclick", d, element);
             	
-            	//debugger;
+            	debugger;
             	if ( d['id'] === 'healthy' ) {
             		chart.load( {
             			unload: ['healthy', 'unhealthy'],
@@ -181,6 +183,7 @@ function send(toSend) {
 	try {
 		//debugger;
 		//var toSend = "Healthy=" + chart.data.values('healthy')[0].toString() + ",Unhealthy=" + chart.data.values('unhealthy')[0].toString();
+		createHTML("To Send: " +  toSend);
 		SASocket.sendData(SAAgent.channelIds[0], toSend);
 	} catch(err) {
 		console.log("exception [" + err.name + "] msg[" + err.message + "]");
@@ -239,12 +242,67 @@ function setToastListener () {
     }, false);
 }
 
+function loadMoreOptions(){
+	debugger;
+	var page = document.querySelector("#main"),
+		//popup = page.querySelector("#moreoptionsPopup"),
+		handler = page.querySelector(".ui-more"),
+		popupCircle = page.querySelector("#moreoptionsPopupCircle"),
+		elSelector = page.querySelector("#selector"),
+		selector,
+		clickHandlerBound;
+
+	function clickHandler(event) {
+		if (tau.support.shape.circle) {
+			createHTML("open circle popup");
+			tau.openPopup(popupCircle);
+		} else {
+			createHTML("open square popup");
+			//tau.openPopup(popup);
+		}
+	}
+
+	page.addEventListener( "pagebeforeshow", function() {
+		var radius = window.innerHeight / 2 * 0.8;
+
+		clickHandlerBound = clickHandler.bind(null);
+		handler.addEventListener("click", clickHandlerBound);
+		if (tau.support.shape.circle) {
+			selector = tau.widget.Selector(elSelector, {itemRadius: radius});
+		}
+	});
+
+	page.addEventListener( "pagebeforehide", function() {
+		handler.removeEventListener("click", clickHandlerBound);
+		if (tau.support.shape.circle) {
+			selector.destroy();
+		}
+	});
+
+	/*
+	 * When user click the indicator of Selector, drawer will close.
+	 */
+	elSelector.addEventListener("click", function(event) {
+		var target = event.target;
+
+		if (tau.support.shape.circle) {
+			// 'ui-selector-indicator' is default indicator class name of Selector component
+			if (target.classList.contains("ui-selector-indicator")) {
+				tau.closePopup(popupCircle);
+			}
+		}
+	});
+}
+
+
+
 window.onload = function() {
 	/* Requests the SAAgent specified in the Accessory Service Profile */
 	webapis.sa.requestSAAgent(requestOnSuccess, requestOnError);
 
 	setDefaultEvents();
-	loadChart();
+	//loadChart();
 	setToastListener();
+	loadMoreOptions();
 };
 
